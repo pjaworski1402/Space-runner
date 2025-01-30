@@ -1,6 +1,11 @@
 declare module '*.png' {
-    const value: string;
-    export default value;
+    const content: string;
+    export default content;
+}
+
+declare module '*.mp3' {
+    const content: ArrayBuffer;
+    export default content;
 }
 
 interface Window {

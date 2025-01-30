@@ -6,6 +6,7 @@ import water from '../assets/image/1.png';
 import mountains from '../assets/image/3.png';
 import clouds from '../assets/image/4.png';
 import sky from '../assets/image/5.png';
+import music from '../assets/music/music.mp3';
 
 export class MenuScene extends Scene {
     private skyTiling: TilingSprite | null = null;
@@ -14,6 +15,8 @@ export class MenuScene extends Scene {
     private waterTiling: TilingSprite | null = null;
     private groundTiling: TilingSprite | null = null;
     private skyAnimation: () => void;
+    private backgroundMusic: HTMLAudioElement | null = null;
+    private musicLoaded: boolean = false;
     
     constructor(app: Application) {
         super(app);
@@ -37,6 +40,16 @@ export class MenuScene extends Scene {
     }
 
     async create() {
+        try {
+            this.backgroundMusic = new Audio();
+            this.backgroundMusic.src = music;
+            this.backgroundMusic.loop = true;
+            this.backgroundMusic.volume = 0.5;
+            this.musicLoaded = true;
+        } catch (error) {
+            console.error('Błąd ładowania muzyki:', error);
+        }
+
         // Czekamy na załadowanie czcionki
         if (!window.fontLoaded) {
             await new Promise<void>((resolve) => {
@@ -138,9 +151,41 @@ export class MenuScene extends Scene {
         });
 
         this.container.addChild(playButton);
+
+        // Dodaj przycisk do włączania/wyłączania muzyki (po przycisku play)
+        const musicButtonStyle = new TextStyle({
+            fontFamily: 'Pixelify Sans',
+            fontSize: 24,
+            fill: '#FFFDD9',
+        });
+
+        const musicButton = new Text('Play Music', musicButtonStyle);
+        musicButton.anchor.set(0.5);
+        musicButton.position.set(this.app.screen.width / 2, 400);
+        musicButton.eventMode = 'static';
+        musicButton.cursor = 'pointer';
+        
+        musicButton.on('pointerdown', () => {
+            if (this.musicLoaded && this.backgroundMusic) {
+                if (this.backgroundMusic.paused) {
+                    this.backgroundMusic.play();
+                    musicButton.text = 'Stop Music';
+                } else {
+                    this.backgroundMusic.pause();
+                    musicButton.text = 'Play Music';
+                }
+            }
+        });
+
+        this.container.addChild(musicButton);
     }
 
     destroy() {
+        if (this.backgroundMusic) {
+            this.backgroundMusic.pause();
+            URL.revokeObjectURL(this.backgroundMusic.src);
+            this.backgroundMusic = null;
+        }
         this.app.ticker.remove(this.skyAnimation);
         this.container.destroy(true);
     }
