@@ -19,6 +19,11 @@
       font-family: 'Pixelify Sans', system-ui;
     }
   </style>
+  <script>
+    document.fonts.load('10px "Pixelify Sans"').then(() => {
+      window.fontLoaded = true;
+    });
+  </script>
 </head>
 <body>
   <canvas id="game"></canvas>

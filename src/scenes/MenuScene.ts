@@ -1,11 +1,11 @@
 import { Application, Container, Text, TextStyle, Sprite, Texture, Assets, TilingSprite } from 'pixi.js';
 import { Scene } from './Scene';
-import button from '../../assets/image/button_play.png';
-import ground from '../../assets/image/0.png';
-import water from '../../assets/image/1.png';
-import mountains from '../../assets/image/3.png';
-import clouds from '../../assets/image/4.png';
-import sky from '../../assets/image/5.png';
+import button from '../assets/image/button_play.png';
+import ground from '../assets/image/0.png';
+import water from '../assets/image/1.png';
+import mountains from '../assets/image/3.png';
+import clouds from '../assets/image/4.png';
+import sky from '../assets/image/5.png';
 
 export class MenuScene extends Scene {
     private skyTiling: TilingSprite | null = null;
@@ -37,6 +37,20 @@ export class MenuScene extends Scene {
     }
 
     async create() {
+        // Czekamy na załadowanie czcionki
+        if (!window.fontLoaded) {
+            await new Promise<void>((resolve) => {
+                const checkFont = () => {
+                    if (window.fontLoaded) {
+                        resolve();
+                    } else {
+                        setTimeout(checkFont, 100);
+                    }
+                };
+                checkFont();
+            });
+        }
+
         const skyTexture = await Assets.load(sky);
         this.skyTiling = new TilingSprite({
             texture: skyTexture,
