@@ -12,5 +12,8 @@
   "devDependencies": {
     "parcel": "^2.13.3",
     "typescript": "^5.7.3"
+  },
+  "dependencies": {
+    "pixi.js": "^8.7.3"
   }
 }
